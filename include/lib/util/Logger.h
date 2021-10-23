@@ -16,8 +16,9 @@
 #include <fstream>
 #include <queue>
 #include <string>
-#include <algorithm>
+#include <sstream>
 #include <ctime>
+#include <iomanip>
 
 namespace Lib1104A
 {
