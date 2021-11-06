@@ -25,7 +25,7 @@ namespace Lib1104A {
             public:
                 //? ctor & dtor
                 Async();
-                ~Async();
+                virtual ~Async();
 
                 //? setters
 

@@ -12,7 +12,7 @@ namespace Lib1104A {
             : m_queue {},
               m_task {std::bind(&Async::run_queue, this)}
         {
-            //* do nothing
+            // do nothing
         }
 
         Async::~Async()

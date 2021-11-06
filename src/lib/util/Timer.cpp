@@ -14,12 +14,12 @@ namespace Lib1104A
               m_mark {0},
               m_last {0}
         {
-            //* do nothing
+            // do nothing
         }
 
         Timer::~Timer() 
         {
-            //* do nothing
+            // do nothing
         }
 
         void Timer::set() const
