@@ -18,18 +18,18 @@ namespace Lib1104A {
     namespace Utility {
         class Timer {
             public:
-                //? constructors
-
+                //? ctor & dtor
                 Timer();
+                ~Timer();
 
-                //? setter functions
+                //? setters
 
                 // set timer mark
                 void set() const;
                 // clear timer mark
                 void clear() const;
 
-                //? getter functions
+                //? getters
 
                 // get current time
                 Misc::ms_t getTime() const;
@@ -38,7 +38,11 @@ namespace Lib1104A {
                 // get Dt from mark
                 Misc::ms_t getDtFromMark() const;
 
+                //? methods
+
             private:
+                //? members
+                
                 // timer start
                 const Misc::ms_t m_start;
                 // timer mark

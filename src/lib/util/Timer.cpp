@@ -15,6 +15,10 @@ namespace Lib1104A {
             //* do nothing
         }
 
+        Timer::~Timer() {
+            //* do nothing
+        }
+
         void Timer::set() const{
             m_mark = pros::millis();
         }
