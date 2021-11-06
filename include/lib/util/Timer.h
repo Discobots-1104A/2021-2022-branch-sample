@@ -32,19 +32,19 @@ namespace Lib1104A {
                 //? getter functions
 
                 // get current time
-                Misc::ms getTime() const;
+                Misc::ms_t getTime() const;
                 // get Dt from last called
-                Misc::ms getDtFromLast() const;
+                Misc::ms_t getDtFromLast() const;
                 // get Dt from mark
-                Misc::ms getDtFromMark() const;
+                Misc::ms_t getDtFromMark() const;
 
             private:
                 // timer start
-                const Misc::ms m_start;
+                const Misc::ms_t m_start;
                 // timer mark
-                mutable Misc::ms m_mark;
+                mutable Misc::ms_t m_mark;
                 // last called
-                mutable Misc::ms m_last;
+                mutable Misc::ms_t m_last;
 
         };
     }

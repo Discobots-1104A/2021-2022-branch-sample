@@ -18,14 +18,14 @@
 namespace Lib1104A {
     namespace Misc {
         //? typedefs
-        using ms = uint32_t;
+        using ms_t = uint32_t;
 
         //? units
-        constexpr ms operator"" _ms(long double foo) {
-            return (ms)(std::roundl(foo));
+        constexpr ms_t operator"" _ms(long double foo) {
+            return (ms_t)(std::roundl(foo));
         }
-        constexpr ms operator"" _s(long double foo) {
-            return (ms)(std::roundl(foo * 1000.0));
+        constexpr ms_t operator"" _s(long double foo) {
+            return (ms_t)(std::roundl(foo * 1000.0));
         }
     }
 }

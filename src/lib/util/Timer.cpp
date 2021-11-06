@@ -23,17 +23,17 @@ namespace Lib1104A {
             m_mark = 0;
         }
 
-        Misc::ms Timer::getTime() const {
+        Misc::ms_t Timer::getTime() const {
             return pros::millis() - m_start;
         }
 
-        Misc::ms Timer::getDtFromLast() const {
-            Misc::ms v_returnVal = pros::millis() - m_last;
+        Misc::ms_t Timer::getDtFromLast() const {
+            Misc::ms_t v_returnVal = pros::millis() - m_last;
             m_last = pros::millis();
             return v_returnVal;
         }
 
-        Misc::ms Timer::getDtFromMark() const {
+        Misc::ms_t Timer::getDtFromMark() const {
             return pros::millis() - m_mark;
         }
     }
