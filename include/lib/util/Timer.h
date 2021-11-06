@@ -14,9 +14,12 @@
 //* stl
 
 
-namespace Lib1104A {
-    namespace Utility {
-        class Timer {
+namespace Lib1104A 
+{
+    namespace Utility 
+    {
+        class Timer 
+        {
             public:
                 //? ctor & dtor
                 Timer();
@@ -42,7 +45,7 @@ namespace Lib1104A {
 
             private:
                 //? members
-                
+
                 // timer start
                 const Misc::ms_t m_start;
                 // timer mark
