@@ -53,6 +53,8 @@ namespace Lib1104A
                 // last called
                 mutable Misc::ms_t m_last;
 
+                //? private methods
+
         };
     }
 }
