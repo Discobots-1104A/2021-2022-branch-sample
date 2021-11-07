@@ -23,7 +23,7 @@ namespace Lib1104A
             public:
                 //? ctor & dtor
                 Timer();
-                virtual ~Timer();
+                ~Timer();
 
                 //? setters
 

@@ -22,7 +22,7 @@ namespace Lib1104A
             public:
                 //? ctor & dtor
                 PassthroughFilter();
-                virtual ~PassthroughFilter();
+                ~PassthroughFilter();
 
                 //? setters
 
