@@ -10,7 +10,8 @@ namespace Lib1104A
     namespace Control
     {
         EMAFilter::EMAFilter(double alpha)
-            : m_alpha {alpha}
+            : m_alpha {alpha},
+              m_prevValue{0.0}
         {
             // do nothing
         }
