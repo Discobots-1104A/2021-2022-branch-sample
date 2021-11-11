@@ -4,6 +4,4 @@
 #include "main.h"
 
 //* auto callback
-void autonomous() {
-    
-}
+void autonomous() {}

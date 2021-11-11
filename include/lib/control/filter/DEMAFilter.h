@@ -14,40 +14,37 @@
 
 //* stl
 
-namespace Lib1104A
-{
-    namespace Control
-    {
-        class DEMAFilter : public AbstractFilter
-        {
-            public:
-                //? ctor & dtor
-                DEMAFilter(double alpha);
-                ~DEMAFilter();
+namespace Lib1104A {
+namespace Control {
+class DEMAFilter : public AbstractFilter {
+public:
+  //? ctor & dtor
+  DEMAFilter(double alpha);
+  ~DEMAFilter();
 
-                //? setters
+  //? setters
 
-                // set alpha
-                DEMAFilter& setAlpha(double alpha);
+  // set alpha
+  DEMAFilter &setAlpha(double alpha);
 
-                //? getters
+  //? getters
 
-                //? methods
+  //? methods
 
-                // reset filter
-                void reset() override;
+  // reset filter
+  void reset() override;
 
-                // filter
-                double filter(double value) override;
+  // filter
+  double filter(double value) override;
 
-            private:
-                //? members
-                double m_alpha;
-                double m_prevValue;
-                double m_prevValue2;
+private:
+  //? members
+  double m_alpha;
+  double m_prevValue;
+  double m_prevValue2;
 
-                //? private methods
-                double ema(double value, double prev);
-        };
-    }
-}
+  //? private methods
+  double ema(double value, double prev);
+};
+} // namespace Control
+} // namespace Lib1104A

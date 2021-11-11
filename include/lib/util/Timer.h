@@ -13,48 +13,43 @@
 
 //* stl
 
+namespace Lib1104A {
+namespace Utility {
+class Timer {
+public:
+  //? ctor & dtor
+  Timer();
+  ~Timer();
 
-namespace Lib1104A 
-{
-    namespace Utility 
-    {
-        class Timer 
-        {
-            public:
-                //? ctor & dtor
-                Timer();
-                ~Timer();
+  //? setters
 
-                //? setters
+  // set timer mark
+  void set() const;
+  // clear timer mark
+  void clear() const;
 
-                // set timer mark
-                void set() const;
-                // clear timer mark
-                void clear() const;
+  //? getters
 
-                //? getters
+  // get current time
+  Misc::ms_t getTime() const;
+  // get Dt from last called
+  Misc::ms_t getDtFromLast() const;
+  // get Dt from mark
+  Misc::ms_t getDtFromMark() const;
 
-                // get current time
-                Misc::ms_t getTime() const;
-                // get Dt from last called
-                Misc::ms_t getDtFromLast() const;
-                // get Dt from mark
-                Misc::ms_t getDtFromMark() const;
+  //? methods
 
-                //? methods
+private:
+  //? members
 
-            private:
-                //? members
+  // timer start
+  const Misc::ms_t m_start;
+  // timer mark
+  mutable Misc::ms_t m_mark;
+  // last called
+  mutable Misc::ms_t m_last;
 
-                // timer start
-                const Misc::ms_t m_start;
-                // timer mark
-                mutable Misc::ms_t m_mark;
-                // last called
-                mutable Misc::ms_t m_last;
-
-                //? private methods
-
-        };
-    }
-}
+  //? private methods
+};
+} // namespace Utility
+} // namespace Lib1104A

@@ -13,39 +13,35 @@
 
 //* stl
 
-namespace Lib1104A
-{
-    namespace Control
-    {
-        class EMAFilter : public AbstractFilter
-        {
-            public:
-                //? ctor & dtor
-                EMAFilter(double alpha);
-                ~EMAFilter();
+namespace Lib1104A {
+namespace Control {
+class EMAFilter : public AbstractFilter {
+public:
+  //? ctor & dtor
+  EMAFilter(double alpha);
+  ~EMAFilter();
 
-                //? setters
+  //? setters
 
-                // set alpha
-                EMAFilter& setAlpha(double alpha);
+  // set alpha
+  EMAFilter &setAlpha(double alpha);
 
-                //? getters
+  //? getters
 
-                //? methods
+  //? methods
 
-                // reset filter
-                void reset() override;
+  // reset filter
+  void reset() override;
 
-                // filter a value
-                double filter(double value) override;
+  // filter a value
+  double filter(double value) override;
 
-            private:
-                //? members
-                double m_alpha;
-                double m_prevValue;
+private:
+  //? members
+  double m_alpha;
+  double m_prevValue;
 
-                //? private methods
-
-        };
-    }
-}
+  //? private methods
+};
+} // namespace Control
+} // namespace Lib1104A

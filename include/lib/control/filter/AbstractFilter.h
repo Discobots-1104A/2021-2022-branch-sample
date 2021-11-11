@@ -12,34 +12,30 @@
 
 //* stl
 
-namespace Lib1104A
-{
-    namespace Control
-    {
-        class AbstractFilter
-        {
-            public:
-                //? ctor & dtor
-                AbstractFilter();
-                virtual ~AbstractFilter();
-                
-                //? setters
+namespace Lib1104A {
+namespace Control {
+class AbstractFilter {
+public:
+  //? ctor & dtor
+  AbstractFilter();
+  virtual ~AbstractFilter();
 
-                //? getters
+  //? setters
 
-                //? methods
+  //? getters
 
-                // reset filter
-                virtual void reset() = 0;
+  //? methods
 
-                // filter a value
-                virtual double filter(double value) = 0;
-            
-            private:
-                //? members
+  // reset filter
+  virtual void reset() = 0;
 
-                //? private methods
+  // filter a value
+  virtual double filter(double value) = 0;
 
-        };
-    }
-}
+private:
+  //? members
+
+  //? private methods
+};
+} // namespace Control
+} // namespace Lib1104A

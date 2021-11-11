@@ -13,34 +13,30 @@
 
 //* stl
 
-namespace Lib1104A
-{
-    namespace Control
-    {
-        class PassthroughFilter : public AbstractFilter
-        {
-            public:
-                //? ctor & dtor
-                PassthroughFilter();
-                ~PassthroughFilter();
+namespace Lib1104A {
+namespace Control {
+class PassthroughFilter : public AbstractFilter {
+public:
+  //? ctor & dtor
+  PassthroughFilter();
+  ~PassthroughFilter();
 
-                //? setters
+  //? setters
 
-                //? getters
+  //? getters
 
-                //? methods
+  //? methods
 
-                // reset filter
-                void reset() override;
+  // reset filter
+  void reset() override;
 
-                // filter a value
-                double filter(double value) override;
+  // filter a value
+  double filter(double value) override;
 
-            private:
-                //? members
+private:
+  //? members
 
-                //? private methods
-
-        };
-    }
-}
+  //? private methods
+};
+} // namespace Control
+} // namespace Lib1104A

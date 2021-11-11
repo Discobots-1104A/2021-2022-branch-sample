@@ -18,35 +18,35 @@
 #include <utility>
 
 namespace Lib1104A {
-    namespace Util {
-        using async_func_t = std::pair<std::function<void()>, Misc::ms_t>;
+namespace Util {
+using async_func_t = std::pair<std::function<void()>, Misc::ms_t>;
 
-        class Async {
-            public:
-                //? ctor & dtor
-                Async();
-                ~Async();
+class Async {
+public:
+  //? ctor & dtor
+  Async();
+  ~Async();
 
-                //? setters
+  //? setters
 
-                // add to queue
-                Async& add(std::function<void()> func, Misc::ms_t delay);
+  // add to queue
+  Async &add(std::function<void()> func, Misc::ms_t delay);
 
-                //? getters
+  //? getters
 
-                //? methods
-            
-            private:
-                //? members
+  //? methods
 
-                // queue
-                std::queue<async_func_t> m_queue;
-                // thread
-                pros::Task m_task;
+private:
+  //? members
 
-                //? private methods
-                // run the queue
-                void run_queue();
-        };
-    }
-}
+  // queue
+  std::queue<async_func_t> m_queue;
+  // thread
+  pros::Task m_task;
+
+  //? private methods
+  // run the queue
+  void run_queue();
+};
+} // namespace Util
+} // namespace Lib1104A

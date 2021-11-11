@@ -4,16 +4,10 @@
 #include "main.h"
 
 //* init callback
-void initialize() {
-
-}
+void initialize() {}
 
 //* comp init callback
-void competition_initialize() {
-
-}
+void competition_initialize() {}
 
 //* disabled callback
-void disabled() {
-
-}
+void disabled() {}

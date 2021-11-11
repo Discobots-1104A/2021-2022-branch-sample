@@ -17,75 +17,70 @@
 #include <cmath>
 #include <limits>
 
-namespace Lib1104A
-{
-    namespace Control
-    {
-        struct PIDGains
-        {
-            double m_Kp;
-            double m_Ki;
-            double m_Kd;
-            double m_Kbias;
-        };
+namespace Lib1104A {
+namespace Control {
+struct PIDGains {
+  double m_Kp;
+  double m_Ki;
+  double m_Kd;
+  double m_Kbias;
+};
 
-        class PID
-        {
-            public:
-                //? ctor & dtor
-                explicit PID(PIDGains gains);
-                explicit PID(PIDGains gains, AbstractFilter *filter);
-                ~PID();
+class PID {
+public:
+  //? ctor & dtor
+  explicit PID(PIDGains gains);
+  explicit PID(PIDGains gains, AbstractFilter *filter);
+  ~PID();
 
-                //? setters
+  //? setters
 
-                // set gains
-                PID& setGains(PIDGains gains);
+  // set gains
+  PID &setGains(PIDGains gains);
 
-                // set target
-                PID& setTarget(double target);
+  // set target
+  PID &setTarget(double target);
 
-                // set integral limits
-                PID& setIntegralLimits(double min, double max);
+  // set integral limits
+  PID &setIntegralLimits(double min, double max);
 
-                // toggle integral reset
-                PID& setIntegralReset(bool reset);
+  // toggle integral reset
+  PID &setIntegralReset(bool reset);
 
-                // set max error to integrate
-                PID& setMaxError(double maxError);
+  // set max error to integrate
+  PID &setMaxError(double maxError);
 
-                // set derivative filter
-                PID& setDerivativeFilter(AbstractFilter *filter);
+  // set derivative filter
+  PID &setDerivativeFilter(AbstractFilter *filter);
 
-                //? getters
+  //? getters
 
-                //? methods
+  //? methods
 
-                // reset
-                PID& reset();
+  // reset
+  PID &reset();
 
-                // calculate
-                double calculate(double input);
-            
-            private:
-                //? members
-                PIDGains m_gains;
-                AbstractFilter *m_filter;
-                Utility::Timer m_timer;
+  // calculate
+  double calculate(double input);
 
-                double m_target {0.0};
-                double m_error {0.0};
-                double m_integral {0.0};
-                double m_derivative {0.0};
+private:
+  //? members
+  PIDGains m_gains;
+  AbstractFilter *m_filter;
+  Utility::Timer m_timer;
 
-                double m_lastError {0.0};
-                double m_integralMin {-1.0};
-                double m_integralMax {1.0};
-                double m_maxError {std::numeric_limits<double>::max()};
-                bool m_integralReset {true};
+  double m_target{0.0};
+  double m_error{0.0};
+  double m_integral{0.0};
+  double m_derivative{0.0};
 
-                //? private methods
+  double m_lastError{0.0};
+  double m_integralMin{-1.0};
+  double m_integralMax{1.0};
+  double m_maxError{std::numeric_limits<double>::max()};
+  bool m_integralReset{true};
 
-        };
-    }
-}
+  //? private methods
+};
+} // namespace Control
+} // namespace Lib1104A

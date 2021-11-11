@@ -4,6 +4,4 @@
 #include "main.h"
 
 //* opcontrol callback
-void opcontrol() {
-
-}
+void opcontrol() {}
