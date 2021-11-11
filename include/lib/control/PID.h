@@ -61,13 +61,12 @@ public:
   PID &reset();
 
   // calculate
-  double calculate(double input);
+  double calculate(double input, double dt);
 
 private:
   //? members
   PIDGains m_gains;
   AbstractFilter *m_filter;
-  Utility::Timer m_timer;
 
   double m_target{0.0};
   double m_error{0.0};

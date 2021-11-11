@@ -8,12 +8,12 @@
 namespace Lib1104A {
 namespace Control {
 PID::PID(PIDGains gains)
-    : m_gains{gains}, m_filter{NULL}, m_timer{Utility::Timer()} {
+    : m_gains{gains}, m_filter{NULL} {
   reset();
 }
 
 PID::PID(PIDGains gains, AbstractFilter *filter)
-    : m_gains{gains}, m_filter{filter}, m_timer{Utility::Timer()} {
+    : m_gains{gains}, m_filter{filter} {
   reset();
 }
 
@@ -28,16 +28,14 @@ PID &PID::reset() {
   return *this;
 }
 
-double PID::calculate(double input) {
-  double Dt = m_timer.getDtFromLast();
-
+double PID::calculate(double input, double dt) {
   m_error = std::copysign(1.0, m_target) - (input / m_target);
-  m_derivative = (Dt) ? (m_lastError - m_error) / Dt : 0.0;
+  m_derivative = (dt) ? (m_lastError - m_error) / dt : 0.0;
   m_derivative = m_filter ? m_filter->filter(m_derivative) : m_derivative;
 
   if (m_maxError == std::numeric_limits<double>::max() ||
       std::fabs(m_error) <= m_maxError) {
-    m_integral += m_error * Dt;
+    m_integral += m_error * dt;
   }
   if (m_integralReset &&
       std::copysign(1.0, m_error) != std::copysign(1.0, m_lastError)) {
