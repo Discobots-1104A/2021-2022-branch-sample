@@ -15,6 +15,7 @@
 
 namespace Lib1104A {
 namespace Control {
+
 class PassthroughFilter : public AbstractFilter {
 public:
   //? ctor & dtor
@@ -38,5 +39,6 @@ private:
 
   //? private methods
 };
+
 } // namespace Control
 } // namespace Lib1104A

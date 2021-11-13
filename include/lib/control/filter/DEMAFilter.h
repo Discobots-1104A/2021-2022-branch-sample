@@ -16,6 +16,7 @@
 
 namespace Lib1104A {
 namespace Control {
+
 class DEMAFilter : public AbstractFilter {
 public:
   //? ctor & dtor
@@ -46,5 +47,6 @@ private:
   //? private methods
   double ema(double value, double prev);
 };
+
 } // namespace Control
 } // namespace Lib1104A

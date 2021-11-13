@@ -14,6 +14,7 @@
 
 namespace Lib1104A {
 namespace Control {
+
 class AbstractFilter {
 public:
   //? ctor & dtor
@@ -37,5 +38,6 @@ private:
 
   //? private methods
 };
+
 } // namespace Control
 } // namespace Lib1104A

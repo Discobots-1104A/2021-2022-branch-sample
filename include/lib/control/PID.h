@@ -18,6 +18,7 @@
 
 namespace Lib1104A {
 namespace Control {
+
 struct PIDGains {
   double m_Kp;
   double m_Ki;
@@ -83,5 +84,6 @@ private:
 
   //? private methods
 };
+
 } // namespace Control
 } // namespace Lib1104A

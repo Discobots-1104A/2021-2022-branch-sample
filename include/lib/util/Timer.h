@@ -15,6 +15,7 @@
 
 namespace Lib1104A {
 namespace Utility {
+
 class Timer {
 public:
   //? ctor & dtor
@@ -51,5 +52,6 @@ private:
 
   //? private methods
 };
+
 } // namespace Utility
 } // namespace Lib1104A

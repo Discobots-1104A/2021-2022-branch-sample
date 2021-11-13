@@ -15,6 +15,7 @@
 
 namespace Lib1104A {
 namespace Control {
+
 class EMAFilter : public AbstractFilter {
 public:
   //? ctor & dtor
@@ -43,5 +44,6 @@ private:
 
   //? private methods
 };
+
 } // namespace Control
 } // namespace Lib1104A

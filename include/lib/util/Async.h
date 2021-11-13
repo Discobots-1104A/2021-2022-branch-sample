@@ -19,6 +19,7 @@
 
 namespace Lib1104A {
 namespace Util {
+
 using async_func_t = std::pair<std::function<void()>, Misc::ms_t>;
 
 class Async {
@@ -48,5 +49,6 @@ private:
   // run the queue
   void run_queue();
 };
+
 } // namespace Util
 } // namespace Lib1104A
