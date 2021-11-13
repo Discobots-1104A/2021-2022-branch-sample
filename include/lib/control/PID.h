@@ -10,7 +10,6 @@
 
 //* other headers
 #include "lib/control/filter/Filter.h"
-#include "lib/util/Timer.h"
 
 //* stl
 #include <algorithm>
@@ -36,6 +35,9 @@ public:
   //? setters
 
   // set gains
+  // 
+  // please don't set values unrealistically high, i.e. kP = 200.0
+  // try keeping them around the 1.0 range and even less for kI
   PID &setGains(PIDGains gains);
 
   // set target
