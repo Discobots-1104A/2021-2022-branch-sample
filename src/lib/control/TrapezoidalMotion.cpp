@@ -9,7 +9,7 @@ namespace Lib1104A {
 namespace Control {
 TrapezoidalMotion::TrapezoidalMotion(TrapezoidalLimits mLimits,
                                      FeedforwardLimits ffLimits)
-    : m_mLimits{mLimits}, m_ffLimits{ffLimits}, m_elapsedTime{0.0}, m_target{
+    : m_mLimits{mLimits}, m_ffLimits{ffLimits}, m_elapsedTime{0}, m_target{
                                                                         0.0} {
   m_kVoltsPerMS = m_ffLimits.maxVoltage / m_mLimits.maxVelocity;
   m_kVoltsPerMS2 = m_ffLimits.maxVoltage / m_mLimits.maxAcceleration;
