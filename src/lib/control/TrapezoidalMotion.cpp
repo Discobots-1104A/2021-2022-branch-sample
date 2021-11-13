@@ -37,7 +37,7 @@ double TrapezoidalMotion::getNextTarget(double dt) {
     calculatedVelocity = calculatedVelocity / m_limits.maxVelocity;
     return calculatedVelocity;
   } else if (m_elapsedTime < (2.0 / 3.0) * m_totalTime) {
-    double calculatedVelocity = m_limits.maxVelocity / m_limits.maxVelocity;
+    double calculatedVelocity = 1.0;
     return calculatedVelocity;
   } else {
     double calculatedVelocity =
