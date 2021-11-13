@@ -7,9 +7,12 @@
 
 namespace Lib1104A {
 namespace Control {
-TrapezoidalMotion::TrapezoidalMotion(TrapezoidalLimits limits)
-    : m_limits{limits}, m_elapsedTime{0.0}, m_target{0.0} {
-  // do nothing
+TrapezoidalMotion::TrapezoidalMotion(TrapezoidalLimits mLimits,
+                                     FeedforwardLimits ffLimits)
+    : m_mLimits{mLimits}, m_ffLimits{ffLimits}, m_elapsedTime{0.0}, m_target{
+                                                                        0.0} {
+  m_kVoltsPerMS = m_ffLimits.maxVoltage / m_mLimits.maxVelocity;
+  m_kVoltsPerMS2 = m_ffLimits.maxVoltage / m_mLimits.maxAcceleration;
 }
 
 TrapezoidalMotion::~TrapezoidalMotion() {
@@ -24,29 +27,20 @@ TrapezoidalMotion &TrapezoidalMotion::setTarget(double target) {
 }
 
 TrapezoidalMotion &TrapezoidalMotion::setLimits(TrapezoidalLimits limits) {
-  m_limits = limits;
+  m_mLimits = limits;
+  m_kVoltsPerMS = m_ffLimits.maxVoltage / m_mLimits.maxVelocity;
+  m_kVoltsPerMS2 = m_ffLimits.maxVoltage / m_mLimits.maxAcceleration;
   return *this;
 }
 
 double TrapezoidalMotion::getNextTarget(double dt) {
-  m_elapsedTime += dt;
-  if (m_elapsedTime < (1.0 / 3.0) * m_totalTime) {
-    double calculatedVelocity = (m_acceleration * m_elapsedTime);
-    calculatedVelocity = std::clamp(calculatedVelocity, -m_limits.maxVelocity,
-                                    m_limits.maxVelocity);
-    calculatedVelocity = calculatedVelocity / m_limits.maxVelocity;
-    return calculatedVelocity;
-  } else if (m_elapsedTime < (2.0 / 3.0) * m_totalTime) {
-    double calculatedVelocity = 1.0;
-    return calculatedVelocity;
-  } else {
-    double calculatedVelocity =
-        (m_acceleration * (m_totalTime - m_elapsedTime));
-    calculatedVelocity = std::clamp(calculatedVelocity, -m_limits.maxVelocity,
-                                    m_limits.maxVelocity);
-    calculatedVelocity = (calculatedVelocity / m_limits.maxVelocity);
-    return calculatedVelocity;
-  }
+  m_velocityTarget = calculateVelocityTarget(dt);
+  m_voltageTarget = m_kVoltsPerMS * m_velocityTarget +
+                    m_kVoltsPerMS2 * m_acceleration +
+                    m_ffLimits.minVoltageBackEmf;
+  m_voltageTarget /= m_ffLimits.maxVoltage;
+
+  return m_voltageTarget;
 }
 
 TrapezoidalMotion &TrapezoidalMotion::reset() {
@@ -55,7 +49,7 @@ TrapezoidalMotion &TrapezoidalMotion::reset() {
 }
 
 double TrapezoidalMotion::calculateEstTotalTime() {
-  double calculatedTotalTime = (4.5 * m_target) / (m_limits.maxVelocity);
+  double calculatedTotalTime = (4.5 * m_target) / (m_mLimits.maxVelocity);
   calculatedTotalTime = std::fabs(calculatedTotalTime);
   return Misc::operator""_ms(calculatedTotalTime);
 }
@@ -63,8 +57,28 @@ double TrapezoidalMotion::calculateEstTotalTime() {
 double TrapezoidalMotion::calculateEstAcceleration() {
   double calculatedAcceleration =
       (4.5 * m_target) / (m_totalTime * m_totalTime);
-  return std::clamp(calculatedAcceleration, -m_limits.maxAcceleration,
-                    m_limits.maxAcceleration);
+  return std::clamp(calculatedAcceleration, -m_mLimits.maxAcceleration,
+                    m_mLimits.maxAcceleration);
 }
+
+double TrapezoidalMotion::calculateVelocityTarget(double dt) {
+  m_elapsedTime += dt;
+
+  double velocity;
+
+  if (m_elapsedTime < (1.0 / 3.0) * m_totalTime) {
+    velocity = m_acceleration * m_elapsedTime;
+  } else if (m_elapsedTime < (2.0 / 3.0) * m_totalTime) {
+    velocity = 1.0;
+  } else {
+    velocity = m_acceleration * (m_totalTime - m_elapsedTime);
+  }
+
+  velocity =
+      std::clamp(velocity, -m_mLimits.maxVelocity, m_mLimits.maxVelocity);
+
+  return velocity;
+}
+
 } // namespace Control
 } // namespace Lib1104A

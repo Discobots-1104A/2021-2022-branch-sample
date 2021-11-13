@@ -18,14 +18,21 @@
 
 namespace Lib1104A {
 namespace Control {
+
 struct TrapezoidalLimits {
   double maxVelocity;
   double maxAcceleration;
 };
+
+struct FeedforwardLimits {
+  double maxVoltage;
+  double minVoltageBackEmf;
+};
+
 class TrapezoidalMotion {
 public:
   //? ctor & dtor
-  explicit TrapezoidalMotion(TrapezoidalLimits limits);
+  explicit TrapezoidalMotion(TrapezoidalLimits mLimits, FeedforwardLimits ffLimits);
   ~TrapezoidalMotion();
 
   //? setters
@@ -48,18 +55,22 @@ public:
 
 private:
   //? members
-  TrapezoidalLimits m_limits;
+  TrapezoidalLimits m_mLimits;
+  double m_kVoltsPerMS;
+  double m_kVoltsPerMS2;
+  const FeedforwardLimits m_ffLimits;
 
   Misc::ms_t m_totalTime;
   Misc::ms_t m_elapsedTime;
   double m_target;
   double m_acceleration;
-  double m_currentVelocity;
-
+  double m_velocityTarget;
+  double m_voltageTarget;
 
   //? private methods
   double calculateEstTotalTime();
   double calculateEstAcceleration();
+  double calculateVelocityTarget(double dt);
 };
 } // namespace Control
 } // namespace Lib1104A
