@@ -82,5 +82,3 @@ double TrapezoidalMotion::calculateVelocityTarget(double dt) {
 
 } // namespace Control
 } // namespace Lib1104A
-
-// quick test comment to check ssh
