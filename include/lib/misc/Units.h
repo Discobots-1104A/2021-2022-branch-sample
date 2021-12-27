@@ -16,7 +16,7 @@
 
 namespace Lib1104A {
 namespace Misc {
-  
+
 //? typedefs
 
 //* time
@@ -25,6 +25,16 @@ using ms_t = uint32_t;
 //* distance
 using m_t = uint64_t;
 using in_t = uint64_t;
+
+//* speed
+using rpm_t = double;
+
+//* telem
+using mA_t = int32_t;
+using mV_t = int32_t;
+using W_t = double;
+using C_t = double;
+using Nm_t = double;
 
 //? units
 
