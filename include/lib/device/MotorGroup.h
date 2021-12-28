@@ -22,7 +22,7 @@ class MotorGroup {
 public:
   //? ctor & dtor
   explicit MotorGroup(std::initializer_list<pros::Motor *> motors);
-  ~MotorGroup();
+  virtual ~MotorGroup();
 
   //? setters
   MotorGroup &set_brake_mode(pros::motor_brake_mode_e_t mode);

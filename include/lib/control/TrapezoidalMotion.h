@@ -33,7 +33,7 @@ class TrapezoidalMotion {
 public:
   //? ctor & dtor
   explicit TrapezoidalMotion(TrapezoidalLimits mLimits, FeedforwardLimits ffLimits);
-  ~TrapezoidalMotion();
+  virtual ~TrapezoidalMotion();
 
   //? setters
 

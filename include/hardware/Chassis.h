@@ -23,7 +23,7 @@ class Chassis {
 public:
   //? ctor & dtor
   explicit Chassis(MotorGroup &left, MotorGroup &right);
-  ~Chassis();
+  virtual ~Chassis();
 
   //? setters
 

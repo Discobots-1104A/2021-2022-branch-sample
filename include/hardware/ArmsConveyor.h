@@ -21,7 +21,7 @@ public:
   //? ctor & dtor
   explicit ArmsConveyor(MotorGroup &lift, MotorGroup &holder,
                         MotorGroup &conveyor);
-  ~ArmsConveyor();
+  virtual ~ArmsConveyor();
 
   //? setters
 

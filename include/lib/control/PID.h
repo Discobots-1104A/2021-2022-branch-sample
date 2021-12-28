@@ -31,7 +31,7 @@ public:
   //? ctor & dtor
   explicit PID(PIDGains gains);
   explicit PID(PIDGains gains, AbstractFilter *filter);
-  ~PID();
+  virtual ~PID();
 
   //? setters
 
