@@ -20,7 +20,8 @@ class ArmsConveyor {
 public:
   //? ctor & dtor
   explicit ArmsConveyor(MotorGroup &lift, MotorGroup &holder,
-                        MotorGroup &conveyor);
+                        MotorGroup &conveyor, int lift_speed, int holder_speed,
+                        int holder_max, int conveyor_speed);
   virtual ~ArmsConveyor();
 
   //? setters
@@ -38,6 +39,8 @@ public:
 
 private:
   //? members
+  int m_lift_speed, m_holder_speed, m_holder_max, m_conveyor_speed;
+  bool holder_toggle, conveyor_toggle;
 
   //? private methods
 };
