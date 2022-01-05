@@ -23,8 +23,9 @@ namespace Misc {
 using ms_t = uint32_t;
 
 //* distance
-using m_t = uint64_t;
-using in_t = uint64_t;
+using m_t = double;
+using in_t = double;
+using rt_t = double; // raw ticks
 
 //* speed
 using rpm_t = double;

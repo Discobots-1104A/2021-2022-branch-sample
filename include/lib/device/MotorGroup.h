@@ -54,8 +54,8 @@ public:
 
   //? methods
   void move(int joystick_val) const;
-  void move_absolute(int32_t position, Misc::rpm_t velocity) const;
-  void move_relative(int32_t position, Misc::rpm_t velocity) const;
+  void move_absolute(Misc::rt_t position, Misc::rpm_t velocity) const;
+  void move_relative(Misc::rt_t position, Misc::rpm_t velocity) const;
   void move_velocity(Misc::rpm_t velocity) const;
   void move_velocity(std::initializer_list<Misc::rpm_t> velocities) const;
   void move_voltage(Misc::mV_t voltage) const;
