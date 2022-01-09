@@ -24,7 +24,7 @@
 #define LIFT_ZERO_TORQUE 0.5
 #define HOLDER_HIGH_POSITION 1260.0
 
-
 // max velocities for subsystems
 #define LIFT_MAX_VELOCITY 200
 #define HOLDER_MAX_VELOCITY 200
+#define CONVEYOR_MAX_VELOCITY 200

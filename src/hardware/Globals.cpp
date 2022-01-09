@@ -23,3 +23,4 @@ pros::Controller obj_controlMaster{pros::E_CONTROLLER_MASTER};
 Hardware::Chassis obj_chassis{obj_leftMotors, obj_rightMotors};
 Hardware::Arms obj_arms{obj_liftMotors, obj_holderMotors, obj_PIDGainsLift,
                         obj_PIDGainsHolder, 450, 450};
+Hardware::Conveyor obj_conveyor{obj_intakeMotors};

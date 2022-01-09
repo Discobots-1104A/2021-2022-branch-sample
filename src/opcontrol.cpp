@@ -14,11 +14,13 @@ int holderPosition{0};
 int deadzone(int value);
 void driving(void);
 void arms(void);
+void conveyor(void);
 
 //* opcontrol callback
 void opcontrol() {
   pros::Task drivingFunction{driving};
   pros::Task armsFunction{arms};
+  pros::Task conveyorFunction{conveyor};
 }
 
 //? the other stuff
@@ -74,6 +76,21 @@ void arms(void) {
       obj_arms.setPosition('h', e_armPositions::E_HIGH);
     }
 
+    pros::delay(10);
+  }
+}
+
+//* conveyor
+void conveyor(void) {
+  while (!(pros::competition::is_autonomous() ||
+           pros::competition::is_disabled())) {
+    if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      obj_conveyor.setVelocity(CONVEYOR_MAX_VELOCITY);
+    } else if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+      obj_conveyor.setVelocity(-CONVEYOR_MAX_VELOCITY);
+    } else {
+      obj_conveyor.setVelocity(0);
+    }
     pros::delay(10);
   }
 }

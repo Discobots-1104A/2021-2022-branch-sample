@@ -16,3 +16,4 @@
 extern pros::Controller obj_controlMaster;
 extern Hardware::Chassis obj_chassis;
 extern Hardware::Arms obj_arms;
+extern Hardware::Conveyor obj_conveyor;
