@@ -6,8 +6,8 @@
 #include "lib/util/Async.h"
 
 namespace Lib1104A {
-namespace Util {
-Async::Async() : m_queue{}, m_task{std::bind(&Async::run_queue, this)} {
+namespace Utility {
+Async::Async() : m_queue{}, m_task{std::bind(&Async::runQueue, this)} {
   // do nothing
 }
 
@@ -22,7 +22,7 @@ Async &Async::add(std::function<void()> func, Misc::ms_t delay) {
   return *this;
 }
 
-void Async::run_queue() {
+void Async::runQueue() {
   while (!pros::competition::is_disabled() &&
          m_task.notify_take(0, TIMEOUT_MAX)) {
     while (!m_queue.empty()) {
@@ -36,5 +36,5 @@ void Async::run_queue() {
     }
   }
 }
-} // namespace Util
+} // namespace Utility
 } // namespace Lib1104A

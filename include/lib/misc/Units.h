@@ -26,6 +26,7 @@ using ms_t = uint32_t;
 using m_t = double;
 using in_t = double;
 using rt_t = double; // raw ticks
+using deg_t = double; // degrees for imu
 
 //* speed
 using rpm_t = double;

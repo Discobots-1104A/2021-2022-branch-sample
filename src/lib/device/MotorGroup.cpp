@@ -11,230 +11,252 @@ namespace Lib1104A {
 namespace Device {
 
 //? ctor & dtor
-MotorGroup::MotorGroup(std::initializer_list<int> motor_ports,
-                       pros::motor_brake_mode_e_t brake_mode,
+MotorGroup::MotorGroup(std::initializer_list<int> motorPorts,
+                       pros::motor_brake_mode_e_t brakeMode,
                        pros::motor_gearset_e_t gearset,
-                       pros::motor_encoder_units_e_t encoder_units)
-    : m_brake_mode(brake_mode), m_gearset(gearset),
-      m_encoder_units(encoder_units) {
-  for (int port : motor_ports) {
-    m_motor_ports.push_back(
+                       pros::motor_encoder_units_e_t encoderUnits)
+    : m_brakeMode(brakeMode), m_gearset(gearset),
+      m_encoderUnits(encoderUnits) {
+  for (int port : motorPorts) {
+    m_motorPorts.push_back(
         std::make_tuple<int, bool>(std::abs(port), port < 0));
   }
-  set_brake_mode(brake_mode);
-  set_gearset(gearset);
-  set_encoder_units(encoder_units);
-  set_reverse(motor_ports);
-  tare_position();
+  setBrakeMode(brakeMode);
+  setGearset(gearset);
+  setEncoderUnits(encoderUnits);
+  setReverse(motorPorts);
+  tarePosition();
+}
+
+MotorGroup::~MotorGroup() {
+  // do nothing
 }
 
 //? private methods
-void MotorGroup::set_gearset(pros::motor_gearset_e_t gearset) {
-  for (auto motor_port : m_motor_ports) {
+void MotorGroup::setGearset(pros::motor_gearset_e_t gearset) {
+  for (auto motor_port : m_motorPorts) {
     pros::c::motor_set_gearing(std::get<0>(motor_port), gearset);
   }
   m_gearset = gearset;
 }
 
-void MotorGroup::set_encoder_units(
-    pros::motor_encoder_units_e_t encoder_units) {
-  for (auto motor_port : m_motor_ports) {
-    pros::c::motor_set_encoder_units(std::get<0>(motor_port), encoder_units);
+void MotorGroup::setEncoderUnits(
+    pros::motor_encoder_units_e_t encoderUnits) {
+  for (auto motor_port : m_motorPorts) {
+    pros::c::motor_set_encoder_units(std::get<0>(motor_port), encoderUnits);
   }
-  m_encoder_units = encoder_units;
+  m_encoderUnits = encoderUnits;
 }
 
 //? setters
-MotorGroup &MotorGroup::set_brake_mode(pros::motor_brake_mode_e_t mode) {
-  for (auto motor_port : m_motor_ports) {
-    pros::c::motor_set_brake_mode(std::get<0>(motor_port), mode);
+MotorGroup &MotorGroup::setBrakeMode(pros::motor_brake_mode_e_t mode) {
+  for (auto motorPort : m_motorPorts) {
+    pros::c::motor_set_brake_mode(std::get<0>(motorPort), mode);
   }
-  m_brake_mode = mode;
+  m_brakeMode = mode;
   return *this;
 }
 
-MotorGroup &MotorGroup::set_reverse(void) {
-  m_reverse_state_total = !m_reverse_state_total;
-  for (auto motor_port : m_motor_ports) {
+MotorGroup &MotorGroup::setReverse(void) {
+  m_reverseStateTotal = !m_reverseStateTotal;
+  for (auto motorPort : m_motorPorts) {
     pros::c::motor_set_reversed(
-        std::get<0>(motor_port),
-        (std::get<1>(motor_port) == m_reverse_state_total));
+        std::get<0>(motorPort),
+        (std::get<1>(motorPort) == m_reverseStateTotal));
   }
   return *this;
 }
 
 //* This is catastropically bad, don't do this. Someone needs to fix this.
 MotorGroup &
-MotorGroup::set_reverse(std::initializer_list<int> motor_rev_states) {
-  m_reverse_state_total = false;
-  for (auto motor_port : m_motor_ports) {
+MotorGroup::setReverse(std::initializer_list<int> motorRevStates) {
+  m_reverseStateTotal = false;
+  for (auto motorPort : m_motorPorts) {
     auto iterator = std::find_if(
-        motor_rev_states.begin(), motor_rev_states.end(),
-        [&](int x) { return std::abs(x) == std::get<0>(motor_port); });
+        motorRevStates.begin(), motorRevStates.end(),
+        [&](int x) { return std::abs(x) == std::get<0>(motorPort); });
 
-    if (iterator != motor_rev_states.end()) {
-      std::get<1>(motor_port) = (*iterator < 0);
-      pros::c::motor_set_reversed(std::get<0>(motor_port),
-                                  (std::get<1>(motor_port)));
+    if (iterator != motorRevStates.end()) {
+      std::get<1>(motorPort) = (*iterator < 0);
+      pros::c::motor_set_reversed(std::get<0>(motorPort),
+                                  (std::get<1>(motorPort)));
     }
   }
 
   return *this;
 }
 
-MotorGroup &MotorGroup::tare_position(void) {
-  for (auto motor_port : m_motor_ports) {
-    pros::c::motor_tare_position(std::get<0>(motor_port));
+MotorGroup &MotorGroup::tarePosition(void) {
+  for (auto motorPort : m_motorPorts) {
+    pros::c::motor_tare_position(std::get<0>(motorPort));
   }
   return *this;
 }
 
 //? getters
-Misc::rpm_t MotorGroup::get_velocity(int index) const {
-  return pros::c::motor_get_actual_velocity(std::get<0>(m_motor_ports[index]));
+Misc::rpm_t MotorGroup::getVelocity(int index) const {
+  return pros::c::motor_get_actual_velocity(std::get<0>(m_motorPorts[index]));
 }
 
-Misc::rpm_t MotorGroup::get_velocity(std::initializer_list<int> indices) const {
+Misc::rpm_t MotorGroup::getVelocity(std::initializer_list<int> indices) const {
   Misc::rpm_t velocity = 0;
   for (auto index : indices) {
-    velocity += get_velocity(index);
+    velocity += getVelocity(index);
   }
   velocity /= indices.size();
   return velocity;
 }
 
-Misc::mA_t MotorGroup::get_current(int index) const {
-  return pros::c::motor_get_current_draw(std::get<0>(m_motor_ports[index]));
+Misc::mA_t MotorGroup::getCurrent(int index) const {
+  return pros::c::motor_get_current_draw(std::get<0>(m_motorPorts[index]));
 }
 
-Misc::mA_t MotorGroup::get_current(std::initializer_list<int> indices) const {
+Misc::mA_t MotorGroup::getCurrent(std::initializer_list<int> indices) const {
   Misc::mA_t current = 0;
   for (auto index : indices) {
-    current += get_current(index);
+    current += getCurrent(index);
   }
   current /= indices.size();
   return current;
 }
 
-Misc::mV_t MotorGroup::get_voltage(int index) const {
-  return pros::c::motor_get_voltage(std::get<0>(m_motor_ports[index]));
+Misc::mV_t MotorGroup::getVoltage(int index) const {
+  return pros::c::motor_get_voltage(std::get<0>(m_motorPorts[index]));
 }
 
-Misc::mV_t MotorGroup::get_voltage(std::initializer_list<int> indices) const {
+Misc::mV_t MotorGroup::getVoltage(std::initializer_list<int> indices) const {
   Misc::mV_t voltage = 0;
   for (auto index : indices) {
-    voltage += get_voltage(index);
+    voltage += getVoltage(index);
   }
   voltage /= indices.size();
   return voltage;
 }
 
-bool MotorGroup::get_reversed(void) const { return m_reverse_state_total; }
+bool MotorGroup::getReversed(void) const { return m_reverseStateTotal; }
 
-int32_t MotorGroup::get_direction(int index) const {
-  return pros::c::motor_get_direction(std::get<0>(m_motor_ports[index]));
+int32_t MotorGroup::getDirection(int index) const {
+  return pros::c::motor_get_direction(std::get<0>(m_motorPorts[index]));
 }
 
-uint64_t MotorGroup::get_position(int index) const {
-  return pros::c::motor_get_position(std::get<0>(m_motor_ports[index]));
+Misc::rt_t MotorGroup::getPosition(int index) const {
+  return pros::c::motor_get_position(std::get<0>(m_motorPorts[index]));
 }
 
-uint64_t MotorGroup::get_position(std::initializer_list<int> indices) const {
-  uint64_t position = 0;
+Misc::rt_t MotorGroup::getPosition(std::initializer_list<int> indices) const {
+  Misc::rt_t position = 0;
   for (auto index : indices) {
-    position += get_position(index);
+    position += getPosition(index);
   }
   position /= indices.size();
   return position;
 }
 
-Misc::W_t MotorGroup::get_power(int index) const {
-  return pros::c::motor_get_power(std::get<0>(m_motor_ports[index]));
+Misc::rt_t MotorGroup::getPosition(void) const {
+  Misc::rt_t position = 0;
+  for (auto motorPort : m_motorPorts) {
+    position += getPosition(std::get<0>(motorPort));
+  }
+  position /= m_motorPorts.size();
+  return position;
 }
 
-Misc::W_t MotorGroup::get_power(std::initializer_list<int> indices) const {
+Misc::W_t MotorGroup::getPower(int index) const {
+  return pros::c::motor_get_power(std::get<0>(m_motorPorts[index]));
+}
+
+Misc::W_t MotorGroup::getPower(std::initializer_list<int> indices) const {
   Misc::W_t power = 0;
   for (auto index : indices) {
-    power += get_power(index);
+    power += getPower(index);
   }
   power /= indices.size();
   return power;
 }
 
-Misc::C_t MotorGroup::get_temperature(int index) const {
-  return pros::c::motor_get_temperature(std::get<0>(m_motor_ports[index]));
+Misc::C_t MotorGroup::getTemperature(int index) const {
+  return pros::c::motor_get_temperature(std::get<0>(m_motorPorts[index]));
 }
 
 Misc::C_t
-MotorGroup::get_temperature(std::initializer_list<int> indices) const {
+MotorGroup::getTemperature(std::initializer_list<int> indices) const {
   Misc::C_t temperature = 0;
   for (auto index : indices) {
-    temperature += get_temperature(index);
+    temperature += getTemperature(index);
   }
   temperature /= indices.size();
   return temperature;
 }
 
-Misc::Nm_t MotorGroup::get_torque(int index) const {
-  return pros::c::motor_get_torque(std::get<0>(m_motor_ports[index]));
+Misc::Nm_t MotorGroup::getTorque(int index) const {
+  return pros::c::motor_get_torque(std::get<0>(m_motorPorts[index]));
 }
 
-Misc::Nm_t MotorGroup::get_torque(std::initializer_list<int> indices) const {
+Misc::Nm_t MotorGroup::getTorque(std::initializer_list<int> indices) const {
   Misc::Nm_t torque = 0;
   for (auto index : indices) {
-    torque += get_torque(index);
+    torque += getTorque(index);
   }
   torque /= indices.size();
   return torque;
 }
 
+Misc::Nm_t MotorGroup::getTorque(void) const {
+  Misc::Nm_t torque = 0;
+  for (auto motorPort : m_motorPorts) {
+    torque += getTorque(std::get<0>(motorPort));
+  }
+  torque /= m_motorPorts.size();
+  return torque;
+}
+
 //? methods
-void MotorGroup::move(int joystick_val) const {
-  for (auto motor_port : m_motor_ports) {
-    pros::c::motor_move(std::get<0>(motor_port), joystick_val);
+void MotorGroup::move(int joystickVal) const {
+  for (auto motorPort : m_motorPorts) {
+    pros::c::motor_move(std::get<0>(motorPort), joystickVal);
   }
 }
 
-void MotorGroup::move_absolute(Misc::rt_t position,
+void MotorGroup::moveAbsolute(Misc::rt_t position,
                                Misc::rpm_t velocity) const {
-  for (auto motor_port : m_motor_ports) {
-    pros::c::motor_move_absolute(std::get<0>(motor_port), position, velocity);
+  for (auto motorPort : m_motorPorts) {
+    pros::c::motor_move_absolute(std::get<0>(motorPort), position, velocity);
   }
 }
 
-void MotorGroup::move_relative(Misc::rt_t position,
+void MotorGroup::moveRelative(Misc::rt_t position,
                                Misc::rpm_t velocity) const {
-  for (auto motor_port : m_motor_ports) {
-    pros::c::motor_move_relative(std::get<0>(motor_port), position, velocity);
+  for (auto motorPort : m_motorPorts) {
+    pros::c::motor_move_relative(std::get<0>(motorPort), position, velocity);
   }
 }
 
-void MotorGroup::move_velocity(Misc::rpm_t velocity) const {
-  for (auto motor_port : m_motor_ports) {
-    pros::c::motor_move_velocity(std::get<0>(motor_port), velocity);
+void MotorGroup::moveVelocity(Misc::rpm_t velocity) const {
+  for (auto motorPort : m_motorPorts) {
+    pros::c::motor_move_velocity(std::get<0>(motorPort), velocity);
   }
 }
 
-void MotorGroup::move_velocity(
+void MotorGroup::moveVelocity(
     std::initializer_list<Misc::rpm_t> velocities) const {
   std::vector<Misc::rpm_t> velocities__{velocities};
-  for (int i = 0; i < m_motor_ports.size(); i++) {
-    pros::c::motor_move_velocity(std::get<0>(m_motor_ports[i]),
+  for (int i = 0; i < m_motorPorts.size(); i++) {
+    pros::c::motor_move_velocity(std::get<0>(m_motorPorts[i]),
                                  velocities__[i]);
   }
 }
 
-void MotorGroup::move_voltage(Misc::mV_t voltage) const {
-  for (auto motor_port : m_motor_ports) {
-    pros::c::motor_move_voltage(std::get<0>(motor_port), voltage);
+void MotorGroup::moveVoltage(Misc::mV_t voltage) const {
+  for (auto motorPort : m_motorPorts) {
+    pros::c::motor_move_voltage(std::get<0>(motorPort), voltage);
   }
 }
 
-void MotorGroup::move_voltage(
+void MotorGroup::moveVoltage(
     std::initializer_list<Misc::mV_t> voltages) const {
   std::vector<Misc::mV_t> voltages__{voltages};
-  for (int i = 0; i < m_motor_ports.size(); i++) {
-    pros::c::motor_move_voltage(std::get<0>(m_motor_ports[i]), voltages__[i]);
+  for (int i = 0; i < m_motorPorts.size(); i++) {
+    pros::c::motor_move_voltage(std::get<0>(m_motorPorts[i]), voltages__[i]);
   }
 }
 

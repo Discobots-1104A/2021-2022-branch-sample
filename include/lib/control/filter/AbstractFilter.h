@@ -18,8 +18,8 @@ namespace Control {
 class AbstractFilter {
 public:
   //? ctor & dtor
-  AbstractFilter();
-  virtual ~AbstractFilter();
+  AbstractFilter() = default;
+  virtual ~AbstractFilter() = default;
 
   //? setters
 

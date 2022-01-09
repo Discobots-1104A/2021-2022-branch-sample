@@ -16,3 +16,6 @@
 //* util
 #include "lib/util/Async.h"
 #include "lib/util/Timer.h"
+
+//* device
+#include "lib/device/MotorGroup.h"

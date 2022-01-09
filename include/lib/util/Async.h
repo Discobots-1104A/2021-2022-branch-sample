@@ -18,7 +18,7 @@
 #include <utility>
 
 namespace Lib1104A {
-namespace Util {
+namespace Utility {
 
 using async_func_t = std::pair<std::function<void()>, Misc::ms_t>;
 
@@ -47,8 +47,8 @@ private:
 
   //? private methods
   // run the queue
-  void run_queue();
+  void runQueue();
 };
 
-} // namespace Util
+} // namespace Utility
 } // namespace Lib1104A
