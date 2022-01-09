@@ -12,9 +12,9 @@ Lib1104A::Control::PIDGains obj_PIDGainsHolder = {0.5, 0.001, 0.5, 0.0};
 //* motor groups
 Lib1104A::Device::MotorGroup obj_leftMotors{{16, 19}};
 Lib1104A::Device::MotorGroup obj_rightMotors{{-7, -8}};
-Lib1104A::Device::MotorGroup obj_liftMotors{{-9, 20}};
-Lib1104A::Device::MotorGroup obj_holderMotors{{17}};
-Lib1104A::Device::MotorGroup obj_intakeMotors{{9}};
+Lib1104A::Device::MotorGroup obj_liftMotors{{-9, 20}, pros::E_MOTOR_BRAKE_HOLD};
+Lib1104A::Device::MotorGroup obj_holderMotors{{17}, pros::E_MOTOR_BRAKE_HOLD};
+Lib1104A::Device::MotorGroup obj_intakeMotors{{9}, pros::E_MOTOR_BRAKE_HOLD};
 
 //* pros hardware
 pros::Controller obj_controlMaster{pros::E_CONTROLLER_MASTER};
