@@ -132,7 +132,8 @@ void Arms::liftTaskFn(void) {
 
     int travel = getPosition('l');
     int voltage = m_liftPID.calculate(travel, timer.getDtFromLast());
-    voltage = std::clamp(voltage, -LIFT_MAX_VELOCITY, LIFT_MAX_VELOCITY);
+    voltage = std::clamp(voltage, voltageOld - LIFT_MAX_VELOCITY,
+                         voltageOld + LIFT_MAX_VELOCITY);
 
     m_liftMotors.moveVoltage(voltage);
 
@@ -165,7 +166,8 @@ void Arms::holderTaskFn(void) {
 
     int travel = getPosition('h');
     int voltage = m_holderPID.calculate(travel, timer.getDtFromLast());
-    voltage = std::clamp(voltage, -HOLDER_MAX_VELOCITY, HOLDER_MAX_VELOCITY);
+    voltage = std::clamp(voltage, voltageOld - HOLDER_MAX_VELOCITY,
+                         voltageOld + HOLDER_MAX_VELOCITY);
 
     m_holderMotors.moveVoltage(voltage);
 
