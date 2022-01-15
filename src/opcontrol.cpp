@@ -5,21 +5,17 @@
 #include "lib/libApi.h"
 #include "main.h"
 
-//* local globals for funnies
-int joystickDeadzone{10};
-int liftPosition{0};
-int holderPosition{0};
-
 //* function declarations
-int deadzone(int value);
+int deadzone(int value, int comp);
 void driving(void);
-void arms(void);
+void armsNaive(void);
+void armsPID(void);
 void conveyor(void);
 
 //* opcontrol callback
 void opcontrol() {
   pros::Task drivingFunction{driving};
-  pros::Task armsFunction{arms};
+  pros::Task armsFunction{armsNaive};
   pros::Task conveyorFunction{conveyor};
 }
 
@@ -27,57 +23,49 @@ void opcontrol() {
 
 //* driving
 void driving(void) {
+  const int joystickDeadzone{10};
+
   while (!(pros::competition::is_autonomous() ||
            pros::competition::is_disabled())) {
     int power{deadzone(
-        obj_controlMaster.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y))},
+        obj_controlMaster.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y),
+        joystickDeadzone)},
         turn{deadzone(
-            obj_controlMaster.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X))};
+            obj_controlMaster.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X),
+            joystickDeadzone)};
     obj_chassis.driveJoystick(power + turn, power - turn);
     pros::delay(10);
   }
 }
 
 //* arms
-void arms(void) {
+void armsNaive(void) {
   using Hardware::e_armPositions;
 
   while (!(pros::competition::is_autonomous() ||
            pros::competition::is_disabled())) {
-    if (obj_controlMaster.get_digital_new_press(
-            pros::E_CONTROLLER_DIGITAL_L1) &&
-        liftPosition < 2) {
-      ++liftPosition;
-    } else if (obj_controlMaster.get_digital_new_press(
-                   pros::E_CONTROLLER_DIGITAL_L2) &&
-               liftPosition > 0) {
-      --liftPosition;
-    } else if (obj_controlMaster.get_digital_new_press(
-                   pros::E_CONTROLLER_DIGITAL_UP) &&
-               holderPosition < 1) {
-      ++holderPosition;
-    } else if (obj_controlMaster.get_digital_new_press(
-                   pros::E_CONTROLLER_DIGITAL_DOWN) &&
-               holderPosition > 0) {
-      --holderPosition;
-    }
 
-    if (liftPosition == 0) {
-      obj_arms.setPosition('l', e_armPositions::E_STOW);
-    } else if (liftPosition == 1) {
-      obj_arms.setPosition('l', e_armPositions::E_LOW);
-    } else if (liftPosition == 2) {
-      obj_arms.setPosition('l', e_armPositions::E_HIGH);
-    }
+    if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_L1))
+      obj_arms.setVelocity('l', 100);
+    else if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_L2))
+      obj_arms.setVelocity('l', -100);
+    else
+      obj_arms.setVelocity('l', 0);
 
-    if (holderPosition == 0) {
-      obj_arms.setPosition('h', e_armPositions::E_STOW);
-    } else if (holderPosition == 1) {
-      obj_arms.setPosition('h', e_armPositions::E_HIGH);
-    }
+    if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
+      obj_arms.setVelocity('h', 100);
+    else if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN))
+      obj_arms.setVelocity('h', -100);
+    else
+      obj_arms.setVelocity('h', 0);
 
     pros::delay(10);
   }
+}
+
+//* arms PID
+void armsPID(void) {
+  
 }
 
 //* conveyor
@@ -96,6 +84,4 @@ void conveyor(void) {
 }
 
 //* deadzone func
-int deadzone(int value) {
-  return std::abs(value) < joystickDeadzone ? 0 : value;
-}
+int deadzone(int value, int comp) { return std::abs(value) < comp ? 0 : value; }
