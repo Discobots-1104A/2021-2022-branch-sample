@@ -5,14 +5,30 @@
 #include "lib/libApi.h"
 #include "main.h"
 
+//* function declarations
+void armPositionReset(void);
+
 //* init callback
 void initialize() {
+    armPositionReset();
     obj_arms.tarePosition();
     obj_chassis.tarePosition();
 }
 
 //* comp init callback
-void competition_initialize() {}
+void competition_initialize() {
+    armPositionReset();
+    obj_arms.tarePosition();
+    obj_chassis.tarePosition();
+}
 
 //* disabled callback
 void disabled() {}
+
+//* arm position reset
+void armPositionReset(void) {
+    //* so we want to move the arms all the way back but we don't
+    //* have a limit switch so
+    //TODO: bug someone to get us a limit switch
+    //TODO: make this work
+}
