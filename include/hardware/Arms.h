@@ -53,9 +53,6 @@
 #include <functional>
 
 //* other shid
-using Lib1104A::Control::EMAFilter;
-using Lib1104A::Control::PID;
-using Lib1104A::Control::PIDGains;
 using Lib1104A::Device::MotorGroup;
 using Lib1104A::Misc::mV_t;
 using Lib1104A::Misc::rpm_t;
