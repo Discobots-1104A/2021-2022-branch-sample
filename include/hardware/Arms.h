@@ -49,6 +49,7 @@
 #include "lib/libApi.h"
 #include "okapi/api.hpp"
 #include "okapi/impl/device/motor/motorGroup.hpp"
+#include "pros/adi.hpp"
 
 //* stl
 #include <cmath>
@@ -69,7 +70,7 @@ public:
   //? ctor & dtor
   explicit Arms(MotorGroup &liftMotors, MotorGroup &holderMotors);
   explicit Arms(MotorGroup &liftMotors, MotorGroup &holderMotors,
-                int liftRotationPort, int holderRotationPort);
+                int holderRotationPort);
   virtual ~Arms(void);
 
   //? setters
@@ -86,7 +87,7 @@ public:
 private:
   //? members
   MotorGroup &m_liftMotors, &m_holderMotors;
-  pros::Rotation m_liftRotation, m_holderRotation;
+  pros::ADIAnalogIn m_holderPotentiometer;
   bool m_advancedMode;
 
   //? private methods

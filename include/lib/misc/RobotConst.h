@@ -19,11 +19,12 @@
 #define NULL_SMART_PORT 21
 
 // arm positions in ticks
-#define ARM_RESET_POSITION 50.0
+#define LIFT_RESET_POSITION 100.0
 #define LIFT_HIGH_POSITION 2070.0
 #define LIFT_LOW_POSITION 1350.0
 #define LIFT_ZERO_TORQUE 0.5
-#define HOLDER_HIGH_POSITION 1260.0
+#define HOLDER_RESET_POSITION 10.0
+#define HOLDER_HIGH_POSITION 1020.0
 
 // max velocities for subsystems
 #define LIFT_MAX_VELOCITY 200

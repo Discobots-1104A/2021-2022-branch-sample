@@ -38,5 +38,5 @@ pros::Controller obj_controlMaster{pros::E_CONTROLLER_MASTER};
 
 //* my classes
 Hardware::Chassis obj_chassis{obj_driveLeftMotors, obj_driveRightMotors};
-Hardware::Arms obj_arms{obj_liftMotors, obj_holderMotors};
+Hardware::Arms obj_arms{obj_liftMotors, obj_holderMotors, 1};
 Hardware::Conveyor obj_conveyor{obj_conveyorMotors};

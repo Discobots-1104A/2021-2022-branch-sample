@@ -9,7 +9,7 @@ namespace Hardware {
 //? ctor & dtor
 Arms::Arms(MotorGroup &liftMotors, MotorGroup &holderMotors)
     : m_liftMotors(liftMotors), m_holderMotors(holderMotors),
-      m_liftRotation(NULL_SMART_PORT), m_holderRotation(NULL_SMART_PORT) {
+      m_holderPotentiometer(NULL_ADI_PORT) {
   m_advancedMode = false;
   // m_liftMotors.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   // m_holderMotors.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
@@ -17,9 +17,9 @@ Arms::Arms(MotorGroup &liftMotors, MotorGroup &holderMotors)
 }
 
 Arms::Arms(MotorGroup &liftMotors, MotorGroup &holderMotors,
-           int liftRotationPort, int holderRotationPort)
+           int holderRotationPort)
     : m_liftMotors(liftMotors), m_holderMotors(holderMotors),
-      m_liftRotation(liftRotationPort), m_holderRotation(holderRotationPort) {
+      m_holderPotentiometer(holderRotationPort) {
   m_advancedMode = true;
   tarePosition();
 }
@@ -66,7 +66,8 @@ rt_t Arms::getPosition(char arms) {
   if (arms == 'l') {
     return m_liftMotors.getPosition();
   } else if (arms == 'h') {
-    return m_holderMotors.getPosition();
+    return (m_advancedMode) ? m_holderPotentiometer.get_value()
+                            : m_holderMotors.getPosition();
   }
   return 0;
 }

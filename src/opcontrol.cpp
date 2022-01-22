@@ -11,6 +11,7 @@
 #include "lib/misc/RobotConst.h"
 #include "lib/util/Timer.h"
 #include "main.h"
+#include "pros/misc.h"
 #include <algorithm>
 
 //* function declarations
@@ -33,6 +34,8 @@ const double voltageRateArms{450.0};
 
 //* opcontrol callback
 void opcontrol() {
+  obj_arms.tarePosition();
+
   pros::Task drivingFunction{driving};
   pros::Task armsFunction{armsPID};
   pros::Task liftFunction{liftPID};
@@ -92,7 +95,6 @@ void armsPID(void) {
     if (obj_controlMaster.get_digital_new_press(
             pros::E_CONTROLLER_DIGITAL_L1)) {
       obj_liftMutex.take(TIMEOUT_MAX);
-      std::cout << "[armPID] took mutex and incrementing position" << std::endl;
       int foo = static_cast<int>(liftPosition);
       foo = (foo < 2) ? foo + 1 : 2;
       liftPosition = static_cast<Hardware::e_armPositions>(foo);
@@ -100,28 +102,27 @@ void armsPID(void) {
     } else if (obj_controlMaster.get_digital_new_press(
                    pros::E_CONTROLLER_DIGITAL_L2)) {
       obj_liftMutex.take(TIMEOUT_MAX);
-      std::cout << "[armPID] took mutex and decrementing position" << std::endl;
       int foo = static_cast<int>(liftPosition);
       foo = (foo > 0) ? foo - 1 : 0;
       liftPosition = static_cast<Hardware::e_armPositions>(foo);
       obj_liftMutex.give();
     }
 
-    // if (obj_controlMaster.get_digital_new_press(
-    //         pros::E_CONTROLLER_DIGITAL_UP)) {
-    //   obj_holderMutex.take(TIMEOUT_MAX);
-    //   int foo = static_cast<int>(holderPosition);
-    //   foo = (foo < 1) ? foo + 1 : 1;
-    //   holderPosition = static_cast<Hardware::e_armPositions>(foo);
-    //   obj_holderMutex.give();
-    // } else if (obj_controlMaster.get_digital_new_press(
-    //                pros::E_CONTROLLER_DIGITAL_DOWN)) {
-    //   obj_holderMutex.take(TIMEOUT_MAX);
-    //   int foo = static_cast<int>(holderPosition);
-    //   foo = (foo > 0) ? foo - 1 : 0;
-    //   holderPosition = static_cast<Hardware::e_armPositions>(foo);
-    //   obj_holderMutex.give();
-    // }
+    if (obj_controlMaster.get_digital_new_press(
+            pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      obj_holderMutex.take(TIMEOUT_MAX);
+      int foo = static_cast<int>(holderPosition);
+      foo = (foo < 1) ? foo + 1 : 1;
+      holderPosition = static_cast<Hardware::e_armPositions>(foo);
+      obj_holderMutex.give();
+    } else if (obj_controlMaster.get_digital_new_press(
+                   pros::E_CONTROLLER_DIGITAL_UP)) {
+      obj_holderMutex.take(TIMEOUT_MAX);
+      int foo = static_cast<int>(holderPosition);
+      foo = (foo > 0) ? foo - 1 : 0;
+      holderPosition = static_cast<Hardware::e_armPositions>(foo);
+      obj_holderMutex.give();
+    }
 
     pros::delay(10);
   }
@@ -136,7 +137,6 @@ void liftPID(void) {
   Lib1104A::Control::PID liftPID{liftGains, liftFilter};
   const int deadzoneZero{20};
 
-  obj_arms.tarePosition();
   liftPID.reset();
 
   while (!(pros::competition::is_autonomous() ||
@@ -144,13 +144,13 @@ void liftPID(void) {
     obj_liftMutex.take(TIMEOUT_MAX);
     int target = []() {
       if (liftPosition == Hardware::e_armPositions::E_STOW)
-        return ARM_RESET_POSITION;
+        return LIFT_RESET_POSITION;
       else if (liftPosition == Hardware::e_armPositions::E_LOW)
         return LIFT_LOW_POSITION;
       else if (liftPosition == Hardware::e_armPositions::E_HIGH)
         return LIFT_HIGH_POSITION;
 
-      return ARM_RESET_POSITION;
+      return LIFT_RESET_POSITION;
     }();
     obj_liftMutex.give();
 
@@ -163,9 +163,10 @@ void liftPID(void) {
                          oldVoltage + voltageRateArms);
 
     //* if our target is zero then we must handle this differently
-    if (target == ARM_RESET_POSITION && deadzone(travel, deadzoneZero)) {
-      voltage = -5'000;
-    } else if (target == ARM_RESET_POSITION && !deadzone(travel, deadzoneZero)) {
+    if (target == LIFT_RESET_POSITION && deadzone(travel, deadzoneZero)) {
+      voltage = -6'000;
+    } else if (target == LIFT_RESET_POSITION &&
+               !deadzone(travel, deadzoneZero)) {
       voltage = 0;
     }
 
@@ -179,15 +180,38 @@ void liftPID(void) {
 
 //* holder PID
 void holderPID(void) {
+  double oldVoltage{0.0};
+  Lib1104A::Control::PIDGains holderGains{1.0, 0.005, 0.1};
+  Lib1104A::Control::AbstractFilter *holderFilter =
+      new Lib1104A::Control::PassthroughFilter();
+  Lib1104A::Control::PID holderPID{holderGains, holderFilter};
+
+  holderPID.reset();
+
   while (!(pros::competition::is_autonomous() ||
            pros::competition::is_disabled())) {
-    //TODO: this is temporary until we add more sensors to the holder
-    if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
-      obj_arms.setVelocity('h', 100);
-    else if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN))
-      obj_arms.setVelocity('h', -100);
-    else
-      obj_arms.setVelocity('h', 0);
+    obj_holderMutex.take(TIMEOUT_MAX);
+    int target = []() {
+      if (holderPosition == Hardware::e_armPositions::E_STOW)
+        return HOLDER_RESET_POSITION;
+      else if (holderPosition == Hardware::e_armPositions::E_LOW)
+        return HOLDER_HIGH_POSITION;
+
+      return HOLDER_RESET_POSITION;
+    }();
+    obj_holderMutex.give();
+
+    holderPID.setTarget(target);
+
+    rt_t travel = obj_arms.getPosition('h');
+    double voltage = 12'000 * holderPID.calculate(travel, 10);
+
+    voltage = std::clamp(voltage, oldVoltage - voltageRateArms,
+                         oldVoltage + voltageRateArms);
+
+    obj_arms.setVoltage('h', voltage);
+
+    oldVoltage = voltage;
 
     pros::delay(10);
   }
