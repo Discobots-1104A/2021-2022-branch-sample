@@ -11,6 +11,8 @@ Arms::Arms(MotorGroup &liftMotors, MotorGroup &holderMotors)
     : m_liftMotors(liftMotors), m_holderMotors(holderMotors),
       m_liftRotation(NULL_SMART_PORT), m_holderRotation(NULL_SMART_PORT) {
   m_advancedMode = false;
+  // m_liftMotors.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
+  // m_holderMotors.setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
   tarePosition();
 }
 
@@ -46,6 +48,16 @@ void Arms::setVoltage(char arm, mV_t voltage) {
     m_liftMotors.moveVoltage(voltage);
   } else if (arm == 'h') {
     m_holderMotors.moveVoltage(voltage);
+  }
+}
+
+void Arms::setPositionAbsolute(char arm, rpm_t velocity, rt_t position) {
+  if (arm == 'l') {
+    while (m_liftMotors.moveAbsolute(velocity, position) != 1) {
+      pros::delay(10);
+    };
+  } else if (arm == 'h') {
+    m_holderMotors.moveAbsolute(velocity, position);
   }
 }
 

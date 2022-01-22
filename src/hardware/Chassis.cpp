@@ -3,6 +3,9 @@
 
 //* headers
 #include "hardware/Chassis.h"
+#include "lib/misc/RobotConst.h"
+#include "lib/misc/Units.h"
+#include "okapi/api/device/motor/abstractMotor.hpp"
 
 namespace Hardware {
 
@@ -27,7 +30,7 @@ Chassis::~Chassis() {
 }
 
 //? setters
-Chassis &Chassis::setBrakeMode(pros::motor_brake_mode_e_t mode) {
+Chassis &Chassis::setBrakeMode(okapi::AbstractMotor::brakeMode mode) {
   m_leftMotors.setBrakeMode(mode);
   m_rightMotors.setBrakeMode(mode);
   return *this;
@@ -75,8 +78,10 @@ deg_t Chassis::getHeading(void) const {
 
 //? methods
 void Chassis::driveJoystick(int joystickLeft, int joystickRight) {
-  m_leftMotors.move(joystickLeft);
-  m_rightMotors.move(joystickRight);
+  rpm_t leftVelocity = (joystickLeft / 127.0) * DRIVE_MAX_VELOCITY;
+  rpm_t rightVelocity = (joystickRight / 127.0) * DRIVE_MAX_VELOCITY;
+
+  driveVelocity(leftVelocity, rightVelocity);
 }
 
 void Chassis::driveVelocity(rpm_t leftVelocity, rpm_t rightVelocity) {

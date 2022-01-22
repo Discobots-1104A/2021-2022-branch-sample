@@ -9,12 +9,14 @@
 
 //* other headers
 #include "lib/libApi.h"
+#include "okapi/api.hpp"
+#include "okapi/api/device/motor/abstractMotor.hpp"
 
 //* stl
 #include <cmath>
 
 //* other shid
-using Lib1104A::Device::MotorGroup;
+using okapi::MotorGroup;
 using Lib1104A::Misc::deg_t;
 using Lib1104A::Misc::mV_t;
 using Lib1104A::Misc::rpm_t;
@@ -32,7 +34,7 @@ public:
   virtual ~Chassis();
 
   //? setters
-  Chassis &setBrakeMode(pros::motor_brake_mode_e_t mode);
+  Chassis &setBrakeMode(okapi::AbstractMotor::brakeMode mode);
   Chassis &tarePosition(void);
 
   //? getters

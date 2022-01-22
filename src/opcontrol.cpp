@@ -4,7 +4,9 @@
 #include "hardware/Arms.h"
 #include "hardware/Globals.h"
 #include "lib/control/PID.h"
+#include "lib/control/filter/AbstractFilter.h"
 #include "lib/control/filter/EMAFilter.h"
+#include "lib/control/filter/PassthroughFilter.h"
 #include "lib/libApi.h"
 #include "lib/misc/RobotConst.h"
 #include "lib/util/Timer.h"
@@ -32,7 +34,7 @@ const double voltageRateArms{450.0};
 //* opcontrol callback
 void opcontrol() {
   pros::Task drivingFunction{driving};
-  pros::Task armsFunction{/*armsNaive*/ armsPID};
+  pros::Task armsFunction{armsPID};
   pros::Task liftFunction{liftPID};
   pros::Task holderFunction{holderPID};
   pros::Task conveyorFunction{conveyor};
@@ -87,33 +89,39 @@ void armsNaive(void) {
 void armsPID(void) {
   while (!(pros::competition::is_autonomous() ||
            pros::competition::is_disabled())) {
-    if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+    if (obj_controlMaster.get_digital_new_press(
+            pros::E_CONTROLLER_DIGITAL_L1)) {
       obj_liftMutex.take(TIMEOUT_MAX);
+      std::cout << "[armPID] took mutex and incrementing position" << std::endl;
       int foo = static_cast<int>(liftPosition);
       foo = (foo < 2) ? foo + 1 : 2;
       liftPosition = static_cast<Hardware::e_armPositions>(foo);
       obj_liftMutex.give();
-    } else if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+    } else if (obj_controlMaster.get_digital_new_press(
+                   pros::E_CONTROLLER_DIGITAL_L2)) {
       obj_liftMutex.take(TIMEOUT_MAX);
+      std::cout << "[armPID] took mutex and decrementing position" << std::endl;
       int foo = static_cast<int>(liftPosition);
       foo = (foo > 0) ? foo - 1 : 0;
       liftPosition = static_cast<Hardware::e_armPositions>(foo);
       obj_liftMutex.give();
     }
 
-    if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-      obj_holderMutex.take(TIMEOUT_MAX);
-      int foo = static_cast<int>(holderPosition);
-      foo = (foo < 1) ? foo + 1 : 1;
-      holderPosition = static_cast<Hardware::e_armPositions>(foo);
-      obj_holderMutex.give();
-    } else if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      obj_holderMutex.take(TIMEOUT_MAX);
-      int foo = static_cast<int>(holderPosition);
-      foo = (foo > 0) ? foo - 1 : 0;
-      holderPosition = static_cast<Hardware::e_armPositions>(foo);
-      obj_holderMutex.give();
-    }
+    // if (obj_controlMaster.get_digital_new_press(
+    //         pros::E_CONTROLLER_DIGITAL_UP)) {
+    //   obj_holderMutex.take(TIMEOUT_MAX);
+    //   int foo = static_cast<int>(holderPosition);
+    //   foo = (foo < 1) ? foo + 1 : 1;
+    //   holderPosition = static_cast<Hardware::e_armPositions>(foo);
+    //   obj_holderMutex.give();
+    // } else if (obj_controlMaster.get_digital_new_press(
+    //                pros::E_CONTROLLER_DIGITAL_DOWN)) {
+    //   obj_holderMutex.take(TIMEOUT_MAX);
+    //   int foo = static_cast<int>(holderPosition);
+    //   foo = (foo > 0) ? foo - 1 : 0;
+    //   holderPosition = static_cast<Hardware::e_armPositions>(foo);
+    //   obj_holderMutex.give();
+    // }
 
     pros::delay(10);
   }
@@ -121,12 +129,12 @@ void armsPID(void) {
 
 //* lift PID
 void liftPID(void) {
-  double old_voltage{0.0};
-  Lib1104A::Control::PIDGains liftGains{0.1, 0.1, 0.1};
-  Lib1104A::Control::EMAFilter *liftFilter =
-      new Lib1104A::Control::EMAFilter(0.5);
+  double oldVoltage{0.0};
+  Lib1104A::Control::PIDGains liftGains{3.0, 0.01, 0.5};
+  Lib1104A::Control::AbstractFilter *liftFilter =
+      new Lib1104A::Control::PassthroughFilter();
   Lib1104A::Control::PID liftPID{liftGains, liftFilter};
-  Lib1104A::Utility::Timer liftTimer{};
+  const int deadzoneZero{20};
 
   obj_arms.tarePosition();
   liftPID.reset();
@@ -144,18 +152,26 @@ void liftPID(void) {
 
       return ARM_RESET_POSITION;
     }();
-    liftPID.setTarget(target);
     obj_liftMutex.give();
 
-    int travel = obj_arms.getPosition('l');
-    double voltage =
-        12'000.0 * liftPID.calculate(travel, liftTimer.getDtFromLast());
-    voltage = std::clamp(voltage, old_voltage - voltageRateArms,
-                         old_voltage + voltageRateArms);
+    liftPID.setTarget(target);
+
+    rt_t travel = obj_arms.getPosition('l');
+    double voltage = 12'000 * liftPID.calculate(travel, 10);
+
+    voltage = std::clamp(voltage, oldVoltage - voltageRateArms,
+                         oldVoltage + voltageRateArms);
+
+    //* if our target is zero then we must handle this differently
+    if (target == ARM_RESET_POSITION && deadzone(travel, deadzoneZero)) {
+      voltage = -5'000;
+    } else if (target == ARM_RESET_POSITION && !deadzone(travel, deadzoneZero)) {
+      voltage = 0;
+    }
 
     obj_arms.setVoltage('l', voltage);
 
-    old_voltage = voltage;
+    oldVoltage = voltage;
 
     pros::delay(10);
   }
@@ -163,39 +179,15 @@ void liftPID(void) {
 
 //* holder PID
 void holderPID(void) {
-  double old_voltage{0.0};
-  Lib1104A::Control::PIDGains holderGains{0.1, 0.1, 0.1};
-  Lib1104A::Control::EMAFilter *holderFilter =
-      new Lib1104A::Control::EMAFilter(0.5);
-  Lib1104A::Control::PID holderPID{holderGains, holderFilter};
-  Lib1104A::Utility::Timer holderTimer{};
-
-  obj_arms.tarePosition();
-  holderPID.reset();
-
   while (!(pros::competition::is_autonomous() ||
            pros::competition::is_disabled())) {
-    obj_holderMutex.take(TIMEOUT_MAX);
-    int target = []() {
-      if (holderPosition == Hardware::e_armPositions::E_STOW)
-        return ARM_RESET_POSITION;
-      else if (holderPosition == Hardware::e_armPositions::E_HIGH)
-        return HOLDER_HIGH_POSITION;
-
-      return ARM_RESET_POSITION;
-    }();
-    holderPID.setTarget(target);
-    obj_holderMutex.give();
-
-    int travel = obj_arms.getPosition('h');
-    double voltage =
-        12'000.0 * holderPID.calculate(travel, holderTimer.getDtFromLast());
-    voltage = std::clamp(voltage, old_voltage - voltageRateArms,
-                         old_voltage + voltageRateArms);
-
-    obj_arms.setVoltage('h', voltage);
-
-    old_voltage = voltage;
+    //TODO: this is temporary until we add more sensors to the holder
+    if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_UP))
+      obj_arms.setVelocity('h', 100);
+    else if (obj_controlMaster.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN))
+      obj_arms.setVelocity('h', -100);
+    else
+      obj_arms.setVelocity('h', 0);
 
     pros::delay(10);
   }

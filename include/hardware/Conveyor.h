@@ -11,12 +11,13 @@
 
 //* other headers
 #include "lib/libApi.h"
+#include "okapi/api.hpp"
 
 //* stl
 #include <cmath>
 
 //* other shid
-using Lib1104A::Device::MotorGroup;
+using okapi::MotorGroup;
 using Lib1104A::Misc::rt_t;
 using Lib1104A::Misc::rpm_t;
 

@@ -47,13 +47,15 @@
 
 //* other headers
 #include "lib/libApi.h"
+#include "okapi/api.hpp"
+#include "okapi/impl/device/motor/motorGroup.hpp"
 
 //* stl
 #include <cmath>
 #include <functional>
 
 //* other shid
-using Lib1104A::Device::MotorGroup;
+using okapi::MotorGroup;
 using Lib1104A::Misc::mV_t;
 using Lib1104A::Misc::rpm_t;
 using Lib1104A::Misc::rt_t;
@@ -74,6 +76,7 @@ public:
   Arms &tarePosition(void);
   void setVelocity(char arm, rpm_t velocity);
   void setVoltage(char arm, mV_t voltage);
+  void setPositionAbsolute(char arm, rpm_t velocity, rt_t position);
 
   //? getters
   rt_t getPosition(char arms);

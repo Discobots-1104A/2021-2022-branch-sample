@@ -57,6 +57,7 @@ public:
   PID &setDerivativeFilter(AbstractFilter *filter);
 
   //? getters
+  double &getError(void);
 
   //? methods
 
@@ -73,6 +74,7 @@ private:
 
   double m_target{0.0};
   double m_error{0.0};
+  double m_output{0.0};
   double m_integral{0.0};
   double m_derivative{0.0};
 

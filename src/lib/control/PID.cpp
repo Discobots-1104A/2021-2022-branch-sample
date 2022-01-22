@@ -7,10 +7,7 @@
 
 namespace Lib1104A {
 namespace Control {
-PID::PID(PIDGains gains)
-    : m_gains{gains}, m_filter{NULL} {
-  reset();
-}
+PID::PID(PIDGains gains) : m_gains{gains}, m_filter{NULL} { reset(); }
 
 PID::PID(PIDGains gains, AbstractFilter *filter)
     : m_gains{gains}, m_filter{filter} {
@@ -46,8 +43,13 @@ double PID::calculate(double input, double dt) {
 
   m_lastError = m_error;
 
-  return m_gains.m_Kp * m_error + m_gains.m_Ki * m_integral +
-         m_gains.m_Kd * m_derivative + std::copysign(m_gains.m_Kbias, m_error);
+  m_output = m_gains.m_Kp * m_error + m_gains.m_Ki * m_integral +
+             m_gains.m_Kd * m_derivative +
+             std::copysign(m_gains.m_Kbias, m_error);
+
+  m_output = std::clamp(m_output, -1.0, 1.0);
+
+  return m_output;
 }
 
 PID &PID::setGains(PIDGains gains) {
@@ -80,5 +82,7 @@ PID &PID::setDerivativeFilter(AbstractFilter *filter) {
   m_filter = filter;
   return *this;
 }
+
+double &PID::getError(void) { return m_error; }
 } // namespace Control
 } // namespace Lib1104A

@@ -4,12 +4,14 @@
 #include "hardware/Globals.h"
 #include "lib/libApi.h"
 #include "main.h"
+#include "pros/llemu.hpp"
 
 //* function declarations
 void armPositionReset(void);
 
 //* init callback
 void initialize() {
+    pros::lcd::initialize();
     armPositionReset();
     obj_arms.tarePosition();
     obj_chassis.tarePosition();

@@ -19,7 +19,7 @@
 #define NULL_SMART_PORT 21
 
 // arm positions in ticks
-#define ARM_RESET_POSITION 0.0
+#define ARM_RESET_POSITION 50.0
 #define LIFT_HIGH_POSITION 2070.0
 #define LIFT_LOW_POSITION 1350.0
 #define LIFT_ZERO_TORQUE 0.5
@@ -29,3 +29,6 @@
 #define LIFT_MAX_VELOCITY 200
 #define HOLDER_MAX_VELOCITY 200
 #define CONVEYOR_MAX_VELOCITY 200
+
+// drive shit
+#define DRIVE_MAX_VELOCITY 200
