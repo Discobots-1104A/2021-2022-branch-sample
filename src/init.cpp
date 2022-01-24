@@ -5,13 +5,14 @@
 #include "lib/libApi.h"
 #include "main.h"
 #include "pros/llemu.hpp"
+#include "lvgl_test.h"
 
 //* function declarations
 void armPositionReset(void);
 
 //* init callback
 void initialize() {
-    pros::lcd::initialize();
+    setup_display();
     armPositionReset();
     obj_arms.tarePosition();
     obj_chassis.tarePosition();
