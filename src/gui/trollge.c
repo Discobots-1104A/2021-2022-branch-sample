@@ -1,7 +1,7 @@
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
 #include "lvgl.h"
 #else
-#include "trollge.h"
+#include "gui/guiGlobals.h"
 #endif
 
 #ifndef LV_ATTRIBUTE_MEM_ALIGN
