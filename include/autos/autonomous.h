@@ -3,17 +3,16 @@
 // for autonomous stuff
 namespace Autonomous {
 enum class e_autonomousSelection {
-  E_RED,
-  E_BLUE,
+  E_LIVE,
   E_SKILLS,
   E_TEST,
 };
 
 extern e_autonomousSelection autonomousSelection;
+extern int autonomousSelectionConfirmation;
 
 // autonomous callbacks
-void redAuto(void);
-void blueAuto(void);
+void liveAuto(void);
 void skillsAuto(void);
 void testAuto(void);
 

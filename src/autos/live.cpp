@@ -6,7 +6,8 @@
 #include "main.h"
 
 namespace Autonomous {
-    void redAuto(void) {
+    void liveAuto(void) {
+        std::cout << "[AUTO]: Live auto started.\n";
 
     }
 }

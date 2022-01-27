@@ -7,6 +7,6 @@
 
 namespace Autonomous {
     void skillsAuto(void) {
-
+        std::cout << "[AUTO]: Skills auto started.\n";
     }
 }

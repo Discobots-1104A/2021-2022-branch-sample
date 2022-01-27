@@ -1,6 +1,8 @@
 //* operator control code
 
 //* headers
+#include "display/lv_objx/lv_label.h"
+#include "gui/guiGlobals.h"
 #include "hardware/Arms.h"
 #include "hardware/Globals.h"
 #include "lib/control/PID.h"
@@ -34,6 +36,9 @@ const double voltageRateArms{450.0};
 
 //* opcontrol callback
 void opcontrol() {
+  lv_label_set_text(GUI::autonomousSelectedLabel, "Running opcontrol.");
+  lv_obj_align(GUI::autonomousSelectedLabel, NULL, LV_ALIGN_IN_TOP_MID, 0, 200);
+
   obj_arms.tarePosition();
 
   pros::Task drivingFunction{driving};

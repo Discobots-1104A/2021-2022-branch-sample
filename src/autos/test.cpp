@@ -7,6 +7,6 @@
 
 namespace Autonomous {
     void testAuto(void) {
-
+        std::cout << "[AUTO]: Test auto started.\n";
     }
 }
