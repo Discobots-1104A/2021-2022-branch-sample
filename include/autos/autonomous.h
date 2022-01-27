@@ -3,6 +3,7 @@
 // for autonomous stuff
 namespace Autonomous {
 enum class e_autonomousSelection {
+  E_NONE,
   E_LIVE,
   E_SKILLS,
   E_TEST,

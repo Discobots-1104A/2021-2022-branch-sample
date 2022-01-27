@@ -6,7 +6,7 @@
 #include "main.h"
 
 namespace Autonomous {
-e_autonomousSelection autonomousSelection;
+e_autonomousSelection autonomousSelection = e_autonomousSelection::E_NONE;
 int autonomousSelectionConfirmation = 0;
 } // namespace Autonomous
 

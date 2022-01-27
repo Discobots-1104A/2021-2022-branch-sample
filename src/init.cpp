@@ -7,6 +7,7 @@
 #include "gui/guiGlobals.h"
 #include "hardware/Globals.h"
 #include "lib/libApi.h"
+#include "lib/misc/RobotConst.h"
 #include "main.h"
 #include "pros/llemu.hpp"
 #include "pros/rtos.hpp"
@@ -39,10 +40,15 @@ void disabled() {
 
 //* arm position reset
 void armPositionReset(void) {
-  //* so we want to move the arms all the way back but we don't
-  //* have a limit switch so
-  // TODO: bug someone to get us a limit switch
-  // TODO: make this work
+  while (obj_arms.getPosition('h') < HOLDER_RESET_POSITION) {
+    obj_arms.setVoltage('h', -6'000);
+    pros::delay(500);
+  }
+  obj_arms.setVoltage('h', 0);
+
+  obj_arms.setVoltage('l', -6'000);
+  pros::delay(2000);
+  obj_arms.setVoltage('l', 0);
 }
 
 //* wait for selection

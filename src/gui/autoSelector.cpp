@@ -8,6 +8,7 @@
 #include "display/lv_objx/lv_btn.h"
 #include "display/lv_objx/lv_label.h"
 #include "gui/guiGlobals.h"
+#include "pros/rtos.hpp"
 #include <cstdio>
 
 namespace GUI {
@@ -164,12 +165,19 @@ lv_res_t selectAutonomous(lv_obj_t *btn) {
 }
 
 lv_res_t confirmAutonomousSelection(lv_obj_t *btn) {
+  if (Autonomous::autonomousSelection == Autonomous::e_autonomousSelection::E_NONE) {
+    autoSelectButtonLabelBuffer = "No autonomous selected.";
+    lv_label_set_text(autoSelectButtonLabel,
+                      autoSelectButtonLabelBuffer.c_str());
+    return LV_RES_OK;
+  }
+
   if (Autonomous::autonomousSelectionConfirmation == 0) {
     ++Autonomous::autonomousSelectionConfirmation;
     autoSelectButtonLabelBuffer = "Confirm selected? " + autonomousSelectedText;
     lv_label_set_text(autoSelectButtonLabel,
                       autoSelectButtonLabelBuffer.c_str());
-  } else {
+  } else if (Autonomous::autonomousSelectionConfirmation == 1) {
     Autonomous::autonomousSelectionConfirmation = 2;
   }
 
