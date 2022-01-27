@@ -28,5 +28,9 @@ void autonomous() {
   case Autonomous::e_autonomousSelection::E_TEST:
     Autonomous::testAuto();
     break;
+  case Autonomous::e_autonomousSelection::E_NONE:
+    //TODO: properly handle this error
+    std::cout << "[AUTO] something has gone terribly wrong\n";
+    break;
   }
 }
